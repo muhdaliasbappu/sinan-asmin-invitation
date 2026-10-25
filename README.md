@@ -18,7 +18,7 @@ The envelope stays sealed on the S & A wax-seal cover until the guest taps anywh
 2. **Blessing** — at 2.8 s, as the last of the pocket leaves, the Arabic calligraphy from the supplied PDF writes right-to-left, followed by "In the name of Allah". Bismillah MP3 plays with this scene.
 3. **Invitation** — when the Bismillah ends, the blessing fades and the names appear; Ayat MP3 fades in and loops.
 
-If the envelope layers have not loaded within 2.5 s of the tap, the cover fades straight onto the card instead. "Skip introduction" is available throughout. With reduced motion enabled, the envelope animation is skipped and the page goes straight to the blessing.
+If the envelope layers have not loaded within 2.5 s of the tap, the cover fades straight onto the card instead. "Skip introduction" appears after the envelope finishes opening. During the blessing, tapping anywhere outside the sound control reveals the invitation immediately; Bismillah continues from its current position, and Ayat starts when Bismillah ends. With reduced motion enabled, the envelope animation is skipped and the page goes straight to the blessing.
 
 ## Sound
 

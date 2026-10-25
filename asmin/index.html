@@ -113,7 +113,7 @@ let phase='sealed',timeout,openedByKeyboard=false,mainRevealed=false,revealTimer
 let playbackId=0,motionTimer,openingStopTimer;
 const envelope=$('envelope'),envLayers=[...envelope.querySelectorAll('img')];
 const envReady=Promise.all(envLayers.map(image=>image.decode?image.decode().catch(()=>{}):Promise.resolve()));
-let envDoneTimer;
+let envDoneTimer,envelopeMotionDone=false;
 let soundEnabled=true,waitingForGesture=false,audioRequest=0,blessingStartedAt=null,ayatStartedAt=null,blessingTimer,ayatFadeTimer,bismiPrimed=false,ayatPrimed=false;
 const later=(fn,ms)=>{clearTimeout(timeout);timeout=setTimeout(fn,ms)};
 
@@ -143,26 +143,26 @@ function clearMotionTimers(){clearTimeout(motionTimer)}
 function revealMain(){if(mainRevealed)return;mainRevealed=true;skip.hidden=true;document.body.classList.remove('sealed');document.body.classList.add('opened');main.inert=false;main.removeAttribute('aria-hidden');window.scrollTo({top:0,left:0,behavior:'instant'});opening.classList.add('finished');revealTimer=setTimeout(()=>{opening.hidden=true;if(openedByKeyboard)$('couple-names').focus({preventScroll:true})},950)}
 function finish(){if(phase==='done')return;clearTimeout(openingStopTimer);clearTimeout(blessingTimer);phase='done';playbackId++;audioRequest++;ayatStartedAt=performance.now();try{music.currentTime=0}catch{};music.volume=.02;clearInterval(ayatFadeTimer);bismi.pause();clearMotionTimers();clearTimeout(timeout);revealMain();if(ayatPrimed&&!music.paused){music.muted=!soundEnabled;if(!soundEnabled)music.volume=0;waitingForGesture=false;if(soundEnabled)fadeAyat();syncSoundButton()}else requestSound()}
 function completeBlessing(){if(phase!=='blessing')return;clearTimeout(blessingTimer);phase='transition';bismi.pause();blessing.classList.add('leaving');later(finish,750)}
-function showBlessing(){if(phase==='done'||phase==='blessing')return;clearTimeout(openingStopTimer);phase='blessing';blessingStartedAt=performance.now();playbackId++;clearMotionTimers();blessing.classList.add('visible');openingStage.classList.remove('texture-active');blessing.classList.add('under');$('opening-status').textContent='In the name of Allah, the Most Gracious, the Most Merciful.';if(bismiPrimed&&!bismi.paused){bismi.loop=false;bismi.currentTime=0;bismi.muted=!soundEnabled;bismi.volume=soundEnabled?1:0;waitingForGesture=false;syncSoundButton()}else{bismi.loop=false;requestSound()}scheduleBlessingFallback()}
+function showBlessing(){if(phase==='done'||phase==='blessing')return;clearTimeout(openingStopTimer);phase='blessing';blessingStartedAt=performance.now();playbackId++;clearMotionTimers();skip.hidden=!envelopeMotionDone;blessing.classList.add('visible');openingStage.classList.remove('texture-active');blessing.classList.add('under');$('opening-status').textContent='In the name of Allah, the Most Gracious, the Most Merciful.';if(bismiPrimed&&!bismi.paused){bismi.loop=false;bismi.currentTime=0;bismi.muted=!soundEnabled;bismi.volume=soundEnabled?1:0;waitingForGesture=false;syncSoundButton()}else{bismi.loop=false;requestSound()}scheduleBlessingFallback()}
 function startStage(){
- clearMotionTimers();const attempt=++playbackId;
- if(reduced){cover.classList.add('is-opening');showBlessing();return}
+ clearMotionTimers();const attempt=++playbackId;envelopeMotionDone=false;skip.hidden=true;
+ if(reduced){envelopeMotionDone=true;cover.classList.add('is-opening');showBlessing();return}
  let started=false;
  const live=()=>attempt===playbackId&&phase==='envelope';
  const ready=()=>envLayers.every(image=>image.complete&&image.naturalWidth>0);
  // If the envelope layers are not available, fade the cover straight onto the card.
- const fallback=()=>{if(started||!live())return;started=true;clearMotionTimers();blessing.classList.add('under');cover.classList.add('is-opening');motionTimer=setTimeout(()=>{if(live())showBlessing()},520)};
+ const fallback=()=>{if(started||!live())return;started=true;envelopeMotionDone=true;clearMotionTimers();blessing.classList.add('under');cover.classList.add('is-opening');motionTimer=setTimeout(()=>{if(live())showBlessing()},520)};
  const run=()=>{if(started||!live())return;if(!ready()){fallback();return}started=true;clearMotionTimers();
   blessing.classList.add('under');envelope.classList.remove('done');envelope.classList.add('active');cover.classList.add('instant','is-opening');
-  clearTimeout(envDoneTimer);envDoneTimer=setTimeout(()=>envelope.classList.add('done'),3500);
+  clearTimeout(envDoneTimer);envDoneTimer=setTimeout(()=>{envelope.classList.add('done');envelopeMotionDone=true;if(phase==='blessing')skip.hidden=false},3500);
   motionTimer=setTimeout(()=>{if(live())showBlessing()},2800)};
  envReady.then(run);
  motionTimer=setTimeout(()=>{ready()?run():fallback()},2500);
 }
-function begin(event){if(phase!=='sealed')return;openedByKeyboard=event?.type==='click'&&event.detail===0;phase='envelope';cover.disabled=true;skip.hidden=false;$('opening-status').textContent='Opening your invitation';primeOpeningAudio();startStage()}
+function begin(event){if(phase!=='sealed')return;openedByKeyboard=event?.type==='click'&&event.detail===0;phase='envelope';cover.disabled=true;skip.hidden=true;$('opening-status').textContent='Opening your invitation';primeOpeningAudio();startStage()}
 cover.addEventListener('click',begin);
-function skipIntroduction(event){if(mainRevealed||phase==='sealed'||phase==='done')return;envelope.classList.add('done');openingStage.classList.remove('texture-active');if(event?.detail===0)openedByKeyboard=true;if(phase==='envelope'){phase='blessing';blessingStartedAt=performance.now();playbackId++;clearTimeout(openingStopTimer);clearTimeout(timeout);clearMotionTimers();primeOpeningAudio();if(bismiPrimed&&!bismi.paused){bismi.loop=false;bismi.currentTime=0;bismi.muted=!soundEnabled;bismi.volume=soundEnabled?1:0;waitingForGesture=false;syncSoundButton()}else requestSound(true);scheduleBlessingFallback()}else if(phase==='blessing'){if(soundEnabled&&(bismi.paused||waitingForGesture))requestSound(true)}revealMain();if(phase==='transition')finish()}
-function openFromAnyTap(event){if(event.target.closest?.('#sound'))return;if(phase==='sealed'){if(event.target.closest?.('button, a, input, select, textarea'))return;begin(event);return}if(phase==='envelope'||phase==='blessing'||phase==='transition')skipIntroduction(event)}
+function skipIntroduction(event){if(mainRevealed||phase==='sealed'||phase==='envelope'||phase==='done'||(phase==='blessing'&&!envelopeMotionDone))return;openingStage.classList.remove('texture-active');if(event?.detail===0)openedByKeyboard=true;if(phase==='blessing'&&soundEnabled&&(bismi.paused||waitingForGesture))requestSound(true);revealMain();if(phase==='transition')finish()}
+function openFromAnyTap(event){if(event.target.closest?.('#sound'))return;if(phase==='sealed'){if(event.target.closest?.('button, a, input, select, textarea'))return;begin(event);return}if((phase==='blessing'&&envelopeMotionDone)||phase==='transition')skipIntroduction(event)}
 // Pointerup handles both mouse and touch; using one event avoids treating a
 // single iPhone tap as both the open gesture and an immediate skip gesture.
 if('PointerEvent'in window)document.addEventListener('pointerup',openFromAnyTap,{capture:true,passive:true});else document.addEventListener('touchend',openFromAnyTap,{capture:true,passive:true});
