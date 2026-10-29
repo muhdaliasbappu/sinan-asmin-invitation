@@ -18,19 +18,27 @@ The envelope stays sealed on the S & A wax-seal cover until the guest taps anywh
 2. **Blessing** — at 2.8 s, as the last of the pocket leaves, the Arabic calligraphy from the supplied PDF writes right-to-left, followed by "In the name of Allah". Bismillah MP3 plays with this scene.
 3. **Invitation** — when the Bismillah ends, the blessing fades and the names appear; Ayat MP3 fades in and loops.
 
-If the envelope layers have not loaded within 2.5 s of the tap, the cover fades straight onto the card instead. "Skip introduction" appears after the envelope finishes opening. During the blessing, tapping anywhere outside the sound control reveals the invitation immediately; Bismillah continues from its current position, and Ayat starts when Bismillah ends. With reduced motion enabled, the envelope animation is skipped and the page goes straight to the blessing.
+After the opening tap, a tap or click anywhere (or "Skip introduction", or Esc) jumps straight to the invitation details. Skipping never interrupts the sound: the Bismillah always plays to its end and is then followed by the looping Ayat; if the envelope had not reached the blessing yet, the Bismillah starts at the skip. If the envelope layers have not loaded within 2.5 s of the tap, the cover fades straight onto the card instead. If the Bismillah recording cannot play (autoplay blocked, Low Power Mode, in-app browsers), the blessing still moves on to the names after the recording's length, and the next tap plays the Bismillah and then the Ayat. With reduced motion enabled, the envelope animation is skipped and the page goes straight to the blessing.
+
+## Layout
+
+Phones in portrait use the full screen width. On anything wider (tablets, phones in landscape, desktops) the envelope, blessing and invitation are shown as one centred phone-shaped column on a plain #e6e1d9 backdrop: the opening keeps the 9:16 envelope frame, and the invitation column is min(560px, 56.25svh) but never narrower than 400px.
 
 ## Sound
 
-Bismillah and Ayat play with their scenes. The mute control silences tracks and effects; each reload starts with sound enabled. Browsers may block audible autoplay; the first tap retries at the current scene position so the track stays synchronized instead of restarting.
+The audio runs independently of the visuals: Bismillah first (once, to the end), then Ayat fading in and looping. Muting keeps the sequence running silently, so unmuting continues at the right recording. Leaving the tab pauses the sound and returning continues the same recording. Browsers that refuse to start sound get it on the next real tap.
+
+## Colours
+
+The page always shows its own light colours, whatever the phone's theme: `<meta name="color-scheme" content="only light">` and `:root{color-scheme:only light}` opt out of Chrome/Android auto-dark, and a `prefers-color-scheme: dark` block restates the same light colours so Samsung Internet's dark mode uses them instead of recolouring. iOS Safari does not recolour pages.
 
 ## Content
 
-Personal details come from New Invitation 02.pdf, with the groom's address updated at the user's request to Meethale Peedikayil (H), P.O.: Muthuvadathur. Event: Saturday, 19 December 2026, 10:30 AM India Standard Time, Athafy Auditorium, Vallikkad, Muttungal, Vadakara.
+Personal details come from New Invitation 02.pdf, with the groom's address updated at the user's request to Meethale Peedikayil House, P.O. Muthuvadathur, Purameri, and the bride's grandfather as Moosakoya Haji Mannangara. Event: Saturday, 19 December 2026, 10:30 AM India Standard Time, Athafy Auditorium, Vallikkad, Muttungal, Vadakara.
 
-Both pages show the full family cards (bride: D/O. …, Nadalakkandiyil House, Narikkuni PO, Calicut; groom: S/O. …, Meethale Peedikayil (H), P.O.: Muthuvadathur), a live countdown, Get directions, Save the date (.ics download) and the contact number. Pinyon Script, with larger initial capitals, is reserved for the couple's names; the location heading uses Cormorant. No video player controls, vendor branding, RSVP, hotel, transport, dress-code or gift sections are included.
+Both pages show the full family cards (bride: D/O …, Nadalakkandiyil House, Narikkuni P.O., Calicut; groom: S/O …, Meethale Peedikayil House, P.O. Muthuvadathur, Purameri), a live countdown, Get directions, Save the date (.ics download) and the contact number. The closing signature is "Asmin & Sinan" on the bride's page (couple-name script) and "Thayyil Family & MP Family" on the groom's page, set in Cormorant Garamond Italic 500 (SIL OFL, embedded) for readability. Pinyon Script, with larger initial capitals, is reserved for the couple's names; the location heading uses Cormorant. No video player controls, vendor branding, RSVP, hotel, transport, dress-code or gift sections are included.
 
-All personal text can be edited directly in each page's `index.html`. Fonts, audio and most textures are embedded in the page; the cover, envelope layers and paper textures are loaded from this folder.
+All personal text can be edited directly in each page's `index.html`. Fonts, audio, the envelope layers and the pearl strip are embedded in each page, so a page still opens and animates correctly even if it is opened on its own; only the decorative paper textures and the .ics calendar files are loaded from this folder.
 
 ## Monogram
 
