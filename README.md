@@ -48,4 +48,4 @@ Monogram assets were edited with the built-in image generation tool. Prompt: "Pr
 
 Checked in headless Chromium at 390 × 844 and 1280 × 800: envelope layers line up exactly with the cover, flap/pocket timing against the reference film, fallback when the layers are blocked, countdown ticking, links and family cards on both pages. Not tested on a physical iPhone.
 
-Live: https://muhdaliasbappu.github.io/sinan-asmin-invitation/
+Live: https://sinan-asmin.com/
