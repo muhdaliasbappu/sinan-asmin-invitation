@@ -159,8 +159,22 @@ let phase='sealed',openedAt=0,openedByKeyboard=false,mainRevealed=false;
 let playbackId=0,motionTimer,envDoneTimer,transitionTimer,silentBlessingTimer,skipShowTimer;
 
 /* ------------------------------- audio ---------------------------------- */
-let audioStage='idle',soundEnabled=true,waitingForGesture=false,audioRequest=0,ayatFadeTimer,resumeOnVisible=false;
-const currentTrack=()=>audioStage==='bismi'?bismi:audioStage==='ayat'?music:null;
+// iOS lets a page play one sound at a time and unlocks each player separately, so a
+// single player carries both recordings: the Bismillah, then the Ayat swapped in.
+// The embedded recordings are turned into blob URLs, which iOS plays more reliably
+// than data: URLs.
+const BISMI_LENGTH=8.88;
+function toBlobUrl(track){
+ const src=track.getAttribute('src')||'',m=/^data:([^;,]+);base64,/.exec(src);
+ if(!m)return src;
+ try{const bin=atob(src.slice(m[0].length)),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return URL.createObjectURL(new Blob([bytes],{type:m[1]}))}catch{return src}
+}
+const bismiSrc=toBlobUrl(bismi),ayatSrc=toBlobUrl(music),player=bismi;
+music.removeAttribute('src');music.preload='none';try{music.load()}catch{}
+player.src=bismiSrc;
+let audioStage='idle',soundEnabled=true,waitingForGesture=false,audioRequest=0,ayatFadeTimer,resumeOnVisible=false,bismiWatch,lastBismiTime=0,lastBismiProgress=0;
+const currentTrack=()=>audioStage==='idle'?null:player;
+function bismiLength(){const d=player.duration;return audioStage==='bismi'&&Number.isFinite(d)&&d>1&&d<20?d:BISMI_LENGTH}
 function syncSoundButton(){
  const track=currentTrack(),audible=soundEnabled&&!waitingForGesture&&!!track&&!track.paused;
  const on=soundEnabled&&(audible||audioStage==='idle');
@@ -176,43 +190,59 @@ function play(track){
  if(p&&p.then)p.then(()=>{if(request!==audioRequest)return;waitingForGesture=false;syncSoundButton()})
   .catch(()=>{if(request!==audioRequest)return;waitingForGesture=true;syncSoundButton()});
 }
-// Unlock both recordings inside the opening gesture (needed on iOS/Android),
-// silently, so they can be started later without another tap.
+// Unlock the player inside the opening gesture (needed on iOS/Android), silently,
+// so it can be started later without another tap.
 function unlockAudio(){
- for(const track of [bismi,music]){
-  if(!track.paused)continue;
-  track.muted=true;
-  const p=track.play();
-  if(p&&p.then)p.then(()=>{if(currentTrack()!==track){track.pause();try{track.currentTime=0}catch{}}}).catch(()=>{});
- }
+ if(!player.paused)return;
+ player.muted=true;
+ const p=player.play();
+ if(p&&p.then)p.then(()=>{if(audioStage==='idle'){player.pause();try{player.currentTime=0}catch{}}}).catch(()=>{});
 }
 function startBismillah(){
  if(audioStage!=='idle')return;
  audioStage='bismi';
- music.pause();try{music.currentTime=0}catch{}
- bismi.loop=false;try{bismi.currentTime=0}catch{}
- bismi.volume=1;
- play(bismi);
+ player.loop=false;try{player.currentTime=0}catch{}
+ player.volume=1;
+ lastBismiTime=0;lastBismiProgress=performance.now();
+ play(player);
+ // iOS does not always fire "ended" for an embedded recording, and can hold it as
+ // playing at its last frame. Treat reaching the end, or no progress, as the end.
+ clearInterval(bismiWatch);
+ bismiWatch=setInterval(()=>{
+  if(audioStage!=='bismi'){clearInterval(bismiWatch);return}
+  const now=performance.now(),t=player.currentTime||0;
+  if(t>lastBismiTime+.01){lastBismiTime=t;lastBismiProgress=now}
+  if(player.ended||t>=bismiLength()-.15)return bismiFinished();
+  if(player.paused||document.visibilityState==='hidden'){lastBismiProgress=now;return}
+  if(t>.5&&now-lastBismiProgress>1500)bismiFinished();
+ },250);
+}
+function bismiFinished(){
+ if(audioStage!=='bismi')return;
+ clearInterval(bismiWatch);
+ startAyat();
+ if(phase==='blessing')completeBlessing();
 }
 function fadeAyatIn(){
  clearInterval(ayatFadeTimer);
  const start=performance.now();
- const step=()=>{const v=Math.min(AYAT_VOLUME,Math.max(.02,(performance.now()-start)/1800*AYAT_VOLUME));try{music.volume=v}catch{}if(v>=AYAT_VOLUME)clearInterval(ayatFadeTimer)};
+ const step=()=>{const v=Math.min(AYAT_VOLUME,Math.max(.02,(performance.now()-start)/1800*AYAT_VOLUME));try{player.volume=v}catch{}if(v>=AYAT_VOLUME)clearInterval(ayatFadeTimer)};
  step();ayatFadeTimer=setInterval(step,50);
 }
 function startAyat(){
  if(audioStage==='ayat')return;
  audioStage='ayat';
- bismi.pause();
- music.loop=true;try{music.currentTime=0}catch{}
+ clearInterval(bismiWatch);
+ player.pause();
+ player.src=ayatSrc;player.loop=true;
  fadeAyatIn();
- play(music);
+ play(player);
 }
-bismi.addEventListener('ended',()=>{if(audioStage==='bismi')startAyat();if(phase==='blessing')completeBlessing()});
-for(const track of [bismi,music])for(const e of ['playing','pause'])track.addEventListener(e,syncSoundButton);
+player.addEventListener('ended',()=>{if(audioStage==='bismi')bismiFinished()});
+for(const e of ['playing','pause'])player.addEventListener(e,syncSoundButton);
 function setMuted(muted){
  soundEnabled=!muted;
- for(const track of [bismi,music])track.muted=muted||currentTrack()!==track;
+ player.muted=muted;
  const track=currentTrack();
  if(!muted&&track&&track.paused)play(track);
  if(muted)waitingForGesture=false;
@@ -231,7 +261,7 @@ function retrySound(event){
 }
 for(const e of ['touchend','pointerup','click','keydown'])document.addEventListener(e,retrySound,{capture:true,passive:true});
 // Leaving the tab pauses the sound; coming back continues the same track.
-function pauseForBackground(){const t=currentTrack();resumeOnVisible=!!t&&!t.paused;audioRequest++;for(const track of [bismi,music])track.pause();syncSoundButton()}
+function pauseForBackground(){const t=currentTrack();resumeOnVisible=!!t&&!t.paused;audioRequest++;player.pause();syncSoundButton()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')pauseForBackground();else if(resumeOnVisible){resumeOnVisible=false;const t=currentTrack();if(t)play(t)}});
 window.addEventListener('pagehide',pauseForBackground);
 
@@ -259,12 +289,13 @@ function showBlessing(){
  openingStage.classList.remove('texture-active');
  $('opening-status').textContent='In the name of Allah, the Most Gracious, the Most Merciful.';
  startBismillah();
- if(audioStage==='bismi'&&bismi.ended)return completeBlessing();
- // The names follow the Bismillah. If the recording cannot play at all, move on after its length.
- const length=(Number.isFinite(bismi.duration)&&bismi.duration>0?bismi.duration:9);
+ if(audioStage!=='bismi')return completeBlessing();
+ // The names follow the Bismillah. If the recording cannot play, or never reports its
+ // end, move on after its length, so the blessing never waits for a tap.
+ const shownAt=performance.now(),length=bismiLength();
  silentBlessingTimer=setTimeout(function check(){
   if(phase!=='blessing')return;
-  if(bismi.paused||waitingForGesture)completeBlessing();
+  if(player.paused||waitingForGesture||performance.now()-shownAt>(length+2.5)*1000)completeBlessing();
   else silentBlessingTimer=setTimeout(check,500);
  },(length+.6)*1000);
 }

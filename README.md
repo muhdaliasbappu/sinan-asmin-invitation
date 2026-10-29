@@ -26,7 +26,7 @@ Phones in portrait use the full screen width. On anything wider (tablets, phones
 
 ## Sound
 
-The audio runs independently of the visuals: Bismillah first (once, to the end), then Ayat fading in and looping. Muting keeps the sequence running silently, so unmuting continues at the right recording. Leaving the tab pauses the sound and returning continues the same recording. Browsers that refuse to start sound get it on the next real tap.
+The audio runs independently of the visuals: Bismillah first (once, to the end), then Ayat fading in and looping. Muting keeps the sequence running silently, so unmuting continues at the right recording. Leaving the tab pauses the sound and returning continues the same recording. Browsers that refuse to start sound get it on the next real tap. Both recordings play through one audio player (the Ayat is swapped in after the Bismillah), because iOS plays one page sound at a time and unlocks each player separately; the embedded MP3s are played from blob URLs. The end of the Bismillah is detected from the `ended` event, its position reaching the end, or playback no longer advancing, since iOS Safari does not always fire `ended`; the blessing also moves on by itself at most 2.5 s after the recording's length.
 
 ## Colours
 
