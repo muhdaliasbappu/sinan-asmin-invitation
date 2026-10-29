@@ -116,7 +116,8 @@ h1{font-size:clamp(27px,8cqw,46px);line-height:1.28}
 .blessing-copy{width:52%;max-width:300px}
 .english-blessing{font-size:clamp(16px,6.4cqw,27px)}
 .blessing-translation{font-size:clamp(12px,3.6cqw,15px)}
-</style></head>
+</style><style>/* While the envelope and blessing are showing, nothing behind them scrolls or shows through. iOS Safari ignores overflow:hidden on body for touch scrolling, so the body is pinned as well. */html:has(body.sealed){overflow:hidden;overscroll-behavior:none}body.sealed{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:none}body.sealed #invitation{visibility:hidden}</style>
+</head>
 <body class="sealed">
 <div aria-label="Open the wedding invitation" aria-modal="true" class="opening" id="opening" role="dialog">
 <div class="opening-stage" id="opening-stage">
@@ -344,6 +345,8 @@ function onTap(event){
 // One listener for mouse and touch, so a single tap is never both "open" and "skip".
 if('PointerEvent'in window)document.addEventListener('pointerup',onTap,{capture:true,passive:true});else document.addEventListener('touchend',onTap,{capture:true,passive:true});
 document.addEventListener('keydown',e=>{if((e.key==='Escape')&&phase!=='sealed')skipIntroduction(e)});
+// Swipes and the mouse wheel do nothing until the invitation is revealed.
+for(const e of ['touchmove','wheel'])document.addEventListener(e,event=>{if(!mainRevealed&&event.cancelable)event.preventDefault()},{passive:false});
 syncSoundButton();
 
 const wedding=new Date('2026-12-19T10:30:00+05:30').getTime();function tick(){const n=Math.max(0,Math.floor((wedding-Date.now())/1000));[['days',Math.floor(n/86400)],['hours',Math.floor(n/3600)%24],['minutes',Math.floor(n/60)%60],['seconds',n%60]].forEach(([id,v])=>$(id).textContent=String(v).padStart(2,'0'))}tick();setInterval(tick,1000);
