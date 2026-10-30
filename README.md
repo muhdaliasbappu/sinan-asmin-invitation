@@ -30,7 +30,7 @@ The audio runs independently of the visuals: Bismillah first (once, to the end),
 
 ## Colours
 
-The page always shows its own light colours, whatever the phone's theme: `<meta name="color-scheme" content="only light">` and `:root{color-scheme:only light}` opt out of Chrome/Android auto-dark, and a `prefers-color-scheme: dark` block restates the same light colours so Samsung Internet's dark mode uses them instead of recolouring. iOS Safari does not recolour pages.
+The page always shows its own light colours, whatever the phone's theme. Android browsers that darken pages (Samsung Internet, in-app WebViews in WhatsApp/Instagram/Gmail, Chrome's auto-dark, phone makers' dark modes) leave a page alone only when it declares its own dark theme, and `only light` does not count as one. So the root declares `<meta name="color-scheme" content="light dark">` and `:root{color-scheme:light dark}`, a `prefers-color-scheme: dark` block restates the same light colours, and `body{color-scheme:only light}` keeps everything inside on light defaults. iOS Safari does not recolour pages.
 
 ## Content
 
