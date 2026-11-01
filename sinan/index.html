@@ -120,6 +120,33 @@ body{color-scheme:only light}
 .english-blessing{font-size:clamp(16px,6.4cqw,27px)}
 .blessing-translation{font-size:clamp(12px,3.6cqw,15px)}
 </style><style>/* While the envelope and blessing are showing, nothing behind them scrolls or shows through. iOS Safari ignores overflow:hidden on body for touch scrolling, so the body is pinned as well. */html:has(body.sealed){overflow:hidden;overscroll-behavior:none}body.sealed{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:none}body.sealed #invitation{visibility:hidden}</style>
+<script>/* Samsung Internet: see the si-paint styles below. */if(/SamsungBrowser/.test(navigator.userAgent)||/[?&]si-paint\b/.test(location.search))document.documentElement.classList.add('si-paint')</script><style id="samsung-paint">
+/* Samsung Internet's dark mode recolours every colour a page sets, ignores color-scheme
+   and does not report prefers-color-scheme, so a page cannot opt out or detect it. It
+   leaves images alone, so in Samsung Internet each colour is painted with a one-colour
+   image instead: backgrounds as image backgrounds, text through background-clip:text,
+   lines through border-image or an image layer, and the page's SVG shapes through image
+   masks (set up in the script). The result looks the same with dark mode on or off. */
+html.si-paint{--si-ink:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAF0lEQVQYGWP0iS/7z4AHMOGRA0sNDwUAM/4CMHxBaRIAAAAASUVORK5CYII=);--si-cream:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWP8+uHFfwY8gAmPHFhqeCgAAOpMA9wTPzFiAAAAAElFTkSuQmCC);--si-hint:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAF0lEQVQYGWOMdNX/z4AHMOGRA0sNDwUA3ksB3JgzxcYAAAAASUVORK5CYII=);--si-paper:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWN89/LRfwY8gAmPHFhqeCgAANXTA8hGH1+WAAAAAElFTkSuQmCC);--si-section:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWP88vH1fwY8gAmPHFhqeCgAAO1aA9/yNo4zAAAAAElFTkSuQmCC);--si-backdrop:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWN89vDmfwY8gAmPHFhqeCgAALw+A6/xxYPsAAAAAElFTkSuQmCC);--si-opening:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWN8cuvsfwY8gAmPHFhqeCgAAKbKA5qkM+XkAAAAAElFTkSuQmCC);--si-pill:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWP8/+v9BwY8gAmPHFhqeCgAAPa1A+gi3mUNAAAAAElFTkSuQmCC);--si-skip:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWP89e39XgY8gAmPHFhqeCgAALmuA6xhAzcHAAAAAElFTkSuQmCC);--si-sound:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAGElEQVQYGWP89f3DXgY8gAmPHFhqeCgAALu5A65F5+b+AAAAAElFTkSuQmCC);--si-line33:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAF0lEQVQYGWP0TigNZcADmPDIgaWGhwIAhkEBhQQa1AkAAAAASUVORK5CYII=);--si-line25:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAF0lEQVQYGWP0SahwYMADmPDIgaWGhwIAdQMBdMFrK9kAAAAASUVORK5CYII=);--si-line13:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAF0lEQVQYGWP0TqpQYsADmPDIgaWGhwIAV5ABV3CLzOYAAAAASUVORK5CYII=);--si-pillline:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAF0lEQVQYGWNc1eK3gwEPYMIjB5YaHgoASYoCRIeM+9kAAAAASUVORK5CYII=)}
+html.si-paint,html.si-paint body,html.si-paint .invitation{background:var(--si-paper)}
+html.si-paint .paper-section{background:var(--si-section)}
+html.si-paint .opening{background:var(--si-backdrop)}
+html.si-paint .opening-stage{background:url('../invitation-paper-texture.jpg') center/cover no-repeat,var(--si-opening)}
+html.si-paint .cover-button{background:var(--si-opening)}
+html.si-paint :is(p,h1,h2,h3,a,.countdown-ticket strong,.countdown-ticket span){-webkit-text-fill-color:transparent;background-color:transparent;background-image:var(--si-ink);-webkit-background-clip:text;background-clip:text}
+html.si-paint .countdown :is(h2,.script){background-image:var(--si-cream)}
+html.si-paint .outline-link{border-image:var(--si-line33) 1}
+html.si-paint .family-card+.family-card{border-image:var(--si-line13) 1}
+html.si-paint .contact{border-image:var(--si-line25) 1}
+html.si-paint .open-hint{-webkit-text-fill-color:transparent;border-color:transparent;background:var(--si-hint),var(--si-pill),var(--si-pillline);-webkit-background-clip:text,padding-box,border-box;background-clip:text,padding-box,border-box}
+html.si-paint .skip-intro{-webkit-text-fill-color:transparent;border-color:transparent;background:var(--si-ink),var(--si-skip),var(--si-sound);-webkit-background-clip:text,padding-box,border-box;background-clip:text,padding-box,border-box}
+html.si-paint .sound-button{border-color:transparent;background:var(--si-sound),var(--si-pill);-webkit-background-clip:padding-box,border-box;background-clip:padding-box,border-box}
+html.si-paint svg.si-masked{background:var(--si-ink);-webkit-mask:var(--si-arabic) center/100% 100% no-repeat;mask:var(--si-arabic) center/100% 100% no-repeat}
+html.si-paint svg.si-masked *{visibility:hidden}
+html.si-paint .sound-button svg.si-masked{-webkit-mask-image:var(--si-sound-off);mask-image:var(--si-sound-off)}
+html.si-paint .sound-button[aria-pressed=true] svg.si-masked{-webkit-mask-image:var(--si-sound-on);mask-image:var(--si-sound-on)}
+@media (min-width:600px){html.si-paint body{background:var(--si-backdrop)}}
+</style>
 </head>
 <body class="sealed">
 <div aria-label="Open the wedding invitation" aria-modal="true" class="opening" id="opening" role="dialog">
@@ -351,6 +378,17 @@ document.addEventListener('keydown',e=>{if((e.key==='Escape')&&phase!=='sealed')
 // Swipes and the mouse wheel do nothing until the invitation is revealed.
 for(const e of ['touchmove','wheel'])document.addEventListener(e,event=>{if(!mainRevealed&&event.cancelable)event.preventDefault()},{passive:false});
 syncSoundButton();
+// Samsung Internet (si-paint): the SVG shapes take their colour from an image through a
+// mask made from the same SVG, so its dark mode cannot recolour them.
+if(document.documentElement.classList.contains('si-paint')){
+ const maskUrl=(svg,edit)=>{const c=svg.cloneNode(true);c.setAttribute('xmlns','http://www.w3.org/2000/svg');if(edit)edit(c);return 'url("'+URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(c)],{type:'image/svg+xml'}))+'")'};
+ const stroke=c=>{for(const [k,v] of [['fill','none'],['stroke','#000'],['stroke-width','1.35'],['stroke-linecap','round'],['stroke-linejoin','round']])c.setAttribute(k,v)};
+ const rootStyle=document.documentElement.style,arabic=document.querySelector('.arabic svg'),icon=sound.querySelector('svg');
+ rootStyle.setProperty('--si-arabic',maskUrl(arabic));
+ rootStyle.setProperty('--si-sound-on',maskUrl(icon,c=>{stroke(c);c.querySelector('.muted-mark').remove()}));
+ rootStyle.setProperty('--si-sound-off',maskUrl(icon,c=>{stroke(c);c.querySelector('.waves').remove()}));
+ arabic.classList.add('si-masked');icon.classList.add('si-masked');
+}
 
 const wedding=new Date('2026-12-19T10:30:00+05:30').getTime();function tick(){const n=Math.max(0,Math.floor((wedding-Date.now())/1000));[['days',Math.floor(n/86400)],['hours',Math.floor(n/3600)%24],['minutes',Math.floor(n/60)%60],['seconds',n%60]].forEach(([id,v])=>$(id).textContent=String(v).padStart(2,'0'))}tick();setInterval(tick,1000);
 if('IntersectionObserver'in window&&!reduced){document.body.classList.add('js-ready');const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(e=>observer.observe(e))}
