@@ -36,7 +36,7 @@ Samsung Internet's dark mode is different: it recolours every colour a page sets
 
 ## Content
 
-Personal details come from New Invitation 02.pdf, with the groom's address updated at the user's request to Meethale Peedikayil House, P.O. Muthuvadathur, Purameri, and the bride's grandfather as Moosakoya Haji Mannangara. Event: Saturday, 19 December 2026, 10:30 AM India Standard Time, Athafy Auditorium, Vallikkad, Muttungal, Vadakara.
+Personal details come from New Invitation 02.pdf, with the groom's address updated at the user's request to Meethale Peedikayil House, P.O. Muthuvadathur, Purameri, and the bride's grandfather as Mr. Moosakoya Haji Mannangara. Event: Saturday, 19 December 2026, 10:30 AM India Standard Time, Athafy Auditorium, Vallikkad, Muttungal, Vadakara.
 
 Both pages show the full family cards (bride: D/O …, Nadalakkandiyil House, Narikkuni P.O., Calicut; groom: S/O …, Meethale Peedikayil House, P.O. Muthuvadathur, Purameri), a live countdown, Get directions, Save the date (.ics download) and the contact number. The closing signature is "Asmin & Sinan" on the bride's page (couple-name script) and "Thayyil Family & MP Family" on the groom's page, set in Cormorant Garamond Italic 500 (SIL OFL, embedded) for readability. Pinyon Script, with larger initial capitals, is reserved for the couple's names; the location heading uses Cormorant. No video player controls, vendor branding, RSVP, hotel, transport, dress-code or gift sections are included.
 
